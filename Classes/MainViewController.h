@@ -14,7 +14,9 @@
 @interface MainViewController : UIViewController <FlipsideViewControllerDelegate> {
 	IBOutlet MKMapView *maMapView;
 	IBOutlet UIButton *refreshButton;
-
+	IBOutlet UILabel *distanceA;
+	IBOutlet UILabel *distanceR;
+	
 	KMLParser *kml;
 	
 	// Objets liés à la connexion URL au fichier .kml
@@ -41,5 +43,8 @@
 - (void)majCarte;
 
 @property (nonatomic, retain) UIButton *refreshButton;
+@property (nonatomic, retain) UILabel *distanceA;
+@property (nonatomic, retain) UILabel *distanceR;
+
 
 @end

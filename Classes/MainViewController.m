@@ -9,8 +9,14 @@
 #import "MainViewController.h"
 #import <MapKit/MapKit.h>
 
-// Déclaration de la globale par défaut (nombre d'annotations)
+// Déclaration des globales par défaut
+// - nombre d'annotations
 int nb_points = 5;
+
+// - distances
+double distance_aller = 0;
+double distance_retour = 0;
+
 
 @implementation MainViewController
 
@@ -65,9 +71,11 @@ int nb_points = 5;
 	UIApplication* app = [UIApplication sharedApplication];
 	app.networkActivityIndicatorVisible = YES;
 	
-	request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.rollers-coquillages.org/getkml.php"]
+	NSString *pathKML = [NSString stringWithFormat:@"http://www.rollers-coquillages.org/getkml.php?nb=%d",nb_points];
+	
+	request = [NSURLRequest requestWithURL:[NSURL URLWithString:pathKML]
 							   cachePolicy:NSURLRequestUseProtocolCachePolicy
-						   timeoutInterval:10.0];
+						   timeoutInterval:10.0];	
 	connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
 	if (connection)
 	{
@@ -120,6 +128,65 @@ int nb_points = 5;
 	app.networkActivityIndicatorVisible = NO;
 	
 	kml = [[KMLParser parseKMLAtPath:pathFichierTemp] retain];
+
+	
+	CLLocationDistance distanceTotale = 0;
+	int sequenceNumber = 0;
+	
+	for (KMLPlacemark *placemark in (kml.overlays))
+		 {
+			if ([placemark isKindOfClass:[MKPolyline class]])
+			{
+				sequenceNumber++;
+				CLLocationDistance distanceSequence = 0;
+
+				CLLocationCoordinate2D multicoords[100];
+					
+				// Création d'un NSRange de 0 à 100 points
+				NSRange multirange;
+				multirange.location = 0;
+				multirange.length = 100;
+					
+				// Récupération des points dans le MKPolyline (à l'aide d'une méthode héritée de MKMultiPoint)
+				[placemark getCoordinates:multicoords range:multirange];
+
+				int i;
+				for (i=0; i<multirange.length; i++)
+					{
+					NSLog(@"multicoords : %f %f",multicoords[i].latitude,multicoords[i].longitude);
+
+					CLLocationDistance distanceBetween2Points = 0;
+						
+					if (floor(fabs(multicoords[i].latitude)) != 0 &&
+						floor(fabs(multicoords[i].longitude)) != 0 &&
+						floor(fabs(multicoords[i+1].latitude)) != 0 &&
+						floor(fabs(multicoords[i+1].longitude)) != 0 &&
+						i<99)
+						{
+							// Calcul de la distance entre deux points consécutifs
+							distanceBetween2Points = MKMetersBetweenMapPoints(
+										MKMapPointForCoordinate(multicoords[i]),
+										MKMapPointForCoordinate(multicoords[i+1])     );
+							NSLog(@"Distance : %f",distanceBetween2Points);
+							distanceSequence = distanceSequence + distanceBetween2Points;
+						}
+					}
+					if (sequenceNumber==1)
+					{
+						distanceA.text = [NSString stringWithFormat:@"%.02f km", distanceSequence/1000];
+						distance_aller = distanceSequence;
+					}
+					else if (sequenceNumber==2)
+					{
+						distanceR.text = [NSString stringWithFormat:@"%.02f km", distanceSequence/1000];
+						distance_retour = distanceSequence;
+					}
+					distanceTotale = distanceTotale + distanceSequence;
+					
+				}
+		 }
+	NSLog(@"distanceTotale : %f",distanceTotale);
+
 	
 	// Création de tous les objets MKOverlay sur la MapView
     NSArray *overlays = [kml overlays];

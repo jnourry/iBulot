@@ -19,9 +19,7 @@ extern int nb_points;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-	
-	NSLog(@"Nombre de points : %d", nb_points);
-	
+		
 	if (nb_points > 0)
 		{
 		monSlider.value = nb_points;
@@ -41,8 +39,6 @@ extern int nb_points;
 	nb_points = (int)[sender value];
 	 
 	valeurSlider.text = [NSString stringWithFormat:@"%d", nb_points];
-	
-	NSLog(@"%@", valeurSlider.text);
 }
 
 - (void)didReceiveMemoryWarning {
