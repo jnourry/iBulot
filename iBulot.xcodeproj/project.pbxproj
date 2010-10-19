@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		01A0375D1264D7C300C6506C /* KMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 01A0375C1264D7C300C6506C /* KMLParser.m */; };
+		01A3E805126DFFD200DC61EF /* refresh@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 01A3E804126DFFD200DC61EF /* refresh@2x.png */; };
 		01DD4EC2126374E200CF0CED /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01DD4EC1126374E200CF0CED /* CoreLocation.framework */; };
 		01DD4F651263807300CF0CED /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01DD4F641263807300CF0CED /* MapKit.framework */; };
 		1D3623260D0F684500981E51 /* iBulotAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* iBulotAppDelegate.m */; };
@@ -37,6 +38,7 @@
 /* Begin PBXFileReference section */
 		01A0375B1264D7C300C6506C /* KMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KMLParser.h; sourceTree = "<group>"; };
 		01A0375C1264D7C300C6506C /* KMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KMLParser.m; sourceTree = "<group>"; };
+		01A3E804126DFFD200DC61EF /* refresh@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "refresh@2x.png"; sourceTree = "<group>"; };
 		01DD4EC1126374E200CF0CED /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		01DD4F641263807300CF0CED /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -145,6 +147,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				01A3E804126DFFD200DC61EF /* refresh@2x.png */,
 				280E754A0DD40C5E005A515E /* FlipsideView.xib */,
 				280E754B0DD40C5E005A515E /* MainView.xib */,
 				280E754C0DD40C5E005A515E /* MainWindow.xib */,
@@ -219,6 +222,7 @@
 				280E754D0DD40C5E005A515E /* FlipsideView.xib in Resources */,
 				280E754E0DD40C5E005A515E /* MainView.xib in Resources */,
 				280E754F0DD40C5E005A515E /* MainWindow.xib in Resources */,
+				01A3E805126DFFD200DC61EF /* refresh@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

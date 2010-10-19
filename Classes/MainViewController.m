@@ -13,14 +13,12 @@
 // - nombre d'annotations
 int nb_points = 5;
 
-// - distances
-double distance_aller = 0;
-double distance_retour = 0;
-
-
 @implementation MainViewController
 
 @synthesize refreshButton;
+@synthesize distanceA;
+@synthesize distanceR;
+
 
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
@@ -58,6 +56,9 @@ double distance_retour = 0;
 	
 	// centrer la carte sur Paris
 	[maMapView setRegion:parisRegion animated:TRUE];
+	
+	// Affichage de la position utilisateur
+	maMapView.showsUserLocation = YES;
 	
 	// Recherche du tracé et des points
 	[self getKML];
@@ -133,6 +134,7 @@ double distance_retour = 0;
 	CLLocationDistance distanceTotale = 0;
 	int sequenceNumber = 0;
 	
+	// Recherche parmi les placemarks de ceux étant des MKPolyline (ie les 2 segments du parcours)
 	for (KMLPlacemark *placemark in (kml.overlays))
 		 {
 			if ([placemark isKindOfClass:[MKPolyline class]])
@@ -156,6 +158,7 @@ double distance_retour = 0;
 					NSLog(@"multicoords : %f %f",multicoords[i].latitude,multicoords[i].longitude);
 
 					CLLocationDistance distanceBetween2Points = 0;
+					CLLocationDistance distanceBetweenLocationAndPoint = 0;
 						
 					if (floor(fabs(multicoords[i].latitude)) != 0 &&
 						floor(fabs(multicoords[i].longitude)) != 0 &&
@@ -170,16 +173,30 @@ double distance_retour = 0;
 							NSLog(@"Distance : %f",distanceBetween2Points);
 							distanceSequence = distanceSequence + distanceBetween2Points;
 						}
+					else if (floor(fabs(multicoords[i].latitude)) != 0 &&
+						 floor(fabs(multicoords[i].longitude)) != 0 &&
+						 floor(fabs(multicoords[i+1].latitude)) == 0 &&
+						 floor(fabs(multicoords[i+1].longitude)) == 0
+						 )
+						{
+							// Création d'un pin "Pause" sur la carte
+							MKPointAnnotation *pauseAnnotation = [[[MKPointAnnotation alloc] init] autorelease];
+							
+							pauseAnnotation.coordinate = multicoords[i];
+							pauseAnnotation.title      = @"Pause";
+							
+							[maMapView addAnnotation:pauseAnnotation];
+						}
 					}
 					if (sequenceNumber==1)
 					{
+						// Distance Aller
 						distanceA.text = [NSString stringWithFormat:@"%.02f km", distanceSequence/1000];
-						distance_aller = distanceSequence;
 					}
 					else if (sequenceNumber==2)
 					{
+						// Distance Retour
 						distanceR.text = [NSString stringWithFormat:@"%.02f km", distanceSequence/1000];
-						distance_retour = distanceSequence;
 					}
 					distanceTotale = distanceTotale + distanceSequence;
 					
@@ -325,6 +342,8 @@ double distance_retour = 0;
 // Désallocation des différents objets
 - (void)dealloc {
 	[refreshButton release];
+	[distanceA release];
+	[distanceR release];
 	[maMapView release];
 	[payload release];
 	[connection release];
@@ -341,7 +360,7 @@ double distance_retour = 0;
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>)annotation
 {
-    return [kml viewForAnnotation:annotation];
+	return [kml viewForAnnotation:annotation];
 }
 
 
