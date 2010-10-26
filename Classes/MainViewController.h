@@ -41,6 +41,9 @@
 #pragma mark Autres méthodes
 - (void)getKML;
 - (void)majCarte;
+- (CLLocationDistance) getDistance: (CLLocationCoordinate2D *)arrayCoords;
+- (CLLocationDistance) getDistanceCovered: (CLLocationCoordinate2D *)arrayCoords;
+
 
 @property (nonatomic, retain) UIButton *refreshButton;
 @property (nonatomic, retain) UILabel *distanceA;

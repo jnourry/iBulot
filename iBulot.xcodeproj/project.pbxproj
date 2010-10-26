@@ -11,12 +11,13 @@
 		01A3E805126DFFD200DC61EF /* refresh@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 01A3E804126DFFD200DC61EF /* refresh@2x.png */; };
 		01DD4EC2126374E200CF0CED /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01DD4EC1126374E200CF0CED /* CoreLocation.framework */; };
 		01DD4F651263807300CF0CED /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01DD4F641263807300CF0CED /* MapKit.framework */; };
+		01E3760012776A5E00F079CB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 01E375FF12776A5E00F079CB /* Localizable.strings */; };
+		01E3760F12776B6F00F079CB /* MainView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01E3760E12776B6F00F079CB /* MainView.xib */; };
+		01E3761212776B8A00F079CB /* FlipsideView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01E3761112776B8A00F079CB /* FlipsideView.xib */; };
 		1D3623260D0F684500981E51 /* iBulotAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* iBulotAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
-		280E754D0DD40C5E005A515E /* FlipsideView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 280E754A0DD40C5E005A515E /* FlipsideView.xib */; };
-		280E754E0DD40C5E005A515E /* MainView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 280E754B0DD40C5E005A515E /* MainView.xib */; };
 		280E754F0DD40C5E005A515E /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 280E754C0DD40C5E005A515E /* MainWindow.xib */; };
 		288765590DF743DE002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765580DF743DE002DB57D /* CoreGraphics.framework */; };
 		289233AE0DB2D0DB0083E9F9 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 289233A90DB2D0DB0083E9F9 /* MainViewController.m */; };
@@ -41,13 +42,17 @@
 		01A3E804126DFFD200DC61EF /* refresh@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "refresh@2x.png"; sourceTree = "<group>"; };
 		01DD4EC1126374E200CF0CED /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		01DD4F641263807300CF0CED /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		01E375FD12776A4D00F079CB /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
+		01E3760D12776AFA00F079CB /* fr */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		01E3761012776B7800F079CB /* fr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fr; path = fr.lproj/MainView.xib; sourceTree = "<group>"; };
+		01E3761312776B9100F079CB /* fr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fr; path = fr.lproj/FlipsideView.xib; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* iBulotAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iBulotAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* iBulotAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iBulotAppDelegate.m; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* iBulot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iBulot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		280E754A0DD40C5E005A515E /* FlipsideView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FlipsideView.xib; sourceTree = "<group>"; };
-		280E754B0DD40C5E005A515E /* MainView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainView.xib; sourceTree = "<group>"; };
+		280E754A0DD40C5E005A515E /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/FlipsideView.xib; sourceTree = "<group>"; };
+		280E754B0DD40C5E005A515E /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainView.xib; sourceTree = "<group>"; };
 		280E754C0DD40C5E005A515E /* MainWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		288765580DF743DE002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		289233A80DB2D0DB0083E9F9 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainViewController.h; path = Classes/MainViewController.h; sourceTree = "<group>"; };
@@ -148,10 +153,11 @@
 			isa = PBXGroup;
 			children = (
 				01A3E804126DFFD200DC61EF /* refresh@2x.png */,
-				280E754A0DD40C5E005A515E /* FlipsideView.xib */,
-				280E754B0DD40C5E005A515E /* MainView.xib */,
+				01E3761112776B8A00F079CB /* FlipsideView.xib */,
+				01E3760E12776B6F00F079CB /* MainView.xib */,
 				280E754C0DD40C5E005A515E /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* iBulot-Info.plist */,
+				01E375FF12776A5E00F079CB /* Localizable.strings */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -204,6 +210,7 @@
 				French,
 				German,
 				en,
+				fr,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
@@ -219,10 +226,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				280E754D0DD40C5E005A515E /* FlipsideView.xib in Resources */,
-				280E754E0DD40C5E005A515E /* MainView.xib in Resources */,
+				01E3761212776B8A00F079CB /* FlipsideView.xib in Resources */,
+				01E3760F12776B6F00F079CB /* MainView.xib in Resources */,
 				280E754F0DD40C5E005A515E /* MainWindow.xib in Resources */,
 				01A3E805126DFFD200DC61EF /* refresh@2x.png in Resources */,
+				01E3760012776A5E00F079CB /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,6 +250,36 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		01E375FF12776A5E00F079CB /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				01E375FD12776A4D00F079CB /* English */,
+				01E3760D12776AFA00F079CB /* fr */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		01E3760E12776B6F00F079CB /* MainView.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				280E754B0DD40C5E005A515E /* English */,
+				01E3761012776B7800F079CB /* fr */,
+			);
+			name = MainView.xib;
+			sourceTree = "<group>";
+		};
+		01E3761112776B8A00F079CB /* FlipsideView.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				280E754A0DD40C5E005A515E /* English */,
+				01E3761312776B9100F079CB /* fr */,
+			);
+			name = FlipsideView.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		1D6058940D05DD3E006BFB54 /* Debug */ = {
@@ -288,7 +326,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
-				OTHER_LDFLAGS = "-lxml2";
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				SDKROOT = iphoneos4.1;
 			};

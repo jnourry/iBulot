@@ -9,6 +9,8 @@
 #import "MainViewController.h"
 #import <MapKit/MapKit.h>
 
+#define kMaxPoints 100
+
 // Déclaration des globales par défaut
 // - nombre d'annotations
 int nb_points = 5;
@@ -31,14 +33,13 @@ int nb_points = 5;
 		{
 		UIAlertView *alert = [[UIAlertView alloc]
 							  initWithTitle:@"Attention !!"
-							  message:@"Cette application ne fonctionne que sur iPhone"
+							  message:NSLocalizedString(@"This app only works on iPhone devices",@"")
 							  delegate:self 
 							  cancelButtonTitle:@"OK"
 							  otherButtonTitles:nil];
 		[alert show];
 		[alert release];
 		}
-	[device release];
 	
 	// Définir le zoom
 	MKCoordinateSpan span;
@@ -59,9 +60,11 @@ int nb_points = 5;
 	
 	// Affichage de la position utilisateur
 	maMapView.showsUserLocation = YES;
-	
+	maMapView.userLocation.title = NSLocalizedString(@"My Location",@"");
+		
 	// Recherche du tracé et des points
 	[self getKML];
+	
 }
 
 #pragma mark -
@@ -76,8 +79,10 @@ int nb_points = 5;
 	
 	request = [NSURLRequest requestWithURL:[NSURL URLWithString:pathKML]
 							   cachePolicy:NSURLRequestUseProtocolCachePolicy
-						   timeoutInterval:10.0];	
+						   timeoutInterval:15.0];	
+		
 	connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+	
 	if (connection)
 	{
 		payload = [[NSMutableData data] retain];
@@ -87,8 +92,8 @@ int nb_points = 5;
 	{
 		NSLog(@"Problème de connexion");
 		UIAlertView *alert = [[UIAlertView alloc]
-							  initWithTitle:@"Problème de connexion"
-							  message:@"La connexion au site R&C n'a pas pu être établie"
+							  initWithTitle:NSLocalizedString(@"Network problem",@"")
+							  message:NSLocalizedString(@"Init of URL connexion failed",@"")
 							  delegate:self 
 							  cancelButtonTitle:@"OK"
 							  otherButtonTitles:nil];
@@ -132,75 +137,65 @@ int nb_points = 5;
 
 	
 	CLLocationDistance distanceTotale = 0;
-	int sequenceNumber = 0;
+	CLLocationDistance distanceParcourue = 0;
+	CLLocationDistance distanceSegment = 0;
+	CLLocationCoordinate2D multicoords[kMaxPoints];
+	
+	// Création d'un NSRange de 0 à 100 points
+	NSRange multirange;
+	multirange.location = 0;
+	multirange.length = kMaxPoints;
+
+
+	int segmentNumber = 0;
+	int i=0;
 	
 	// Recherche parmi les placemarks de ceux étant des MKPolyline (ie les 2 segments du parcours)
 	for (KMLPlacemark *placemark in (kml.overlays))
 		 {
 			if ([placemark isKindOfClass:[MKPolyline class]])
 			{
-				sequenceNumber++;
-				CLLocationDistance distanceSequence = 0;
-
-				CLLocationCoordinate2D multicoords[100];
-					
-				// Création d'un NSRange de 0 à 100 points
-				NSRange multirange;
-				multirange.location = 0;
-				multirange.length = 100;
+				segmentNumber++;
 					
 				// Récupération des points dans le MKPolyline (à l'aide d'une méthode héritée de MKMultiPoint)
 				[placemark getCoordinates:multicoords range:multirange];
-
-				int i;
-				for (i=0; i<multirange.length; i++)
-					{
-					NSLog(@"multicoords : %f %f",multicoords[i].latitude,multicoords[i].longitude);
-
-					CLLocationDistance distanceBetween2Points = 0;
-					CLLocationDistance distanceBetweenLocationAndPoint = 0;
-						
-					if (floor(fabs(multicoords[i].latitude)) != 0 &&
-						floor(fabs(multicoords[i].longitude)) != 0 &&
-						floor(fabs(multicoords[i+1].latitude)) != 0 &&
-						floor(fabs(multicoords[i+1].longitude)) != 0 &&
-						i<99)
+				
+				// Nettoyage du tableau des parasites (0,-0) (-0,0) etc...
+				for (i=0; i<kMaxPoints; i++) {
+					if ((floor(fabs(multicoords[i].latitude)) == 0 )  ||
+						(floor(fabs(multicoords[i].longitude)) == 0))
 						{
-							// Calcul de la distance entre deux points consécutifs
-							distanceBetween2Points = MKMetersBetweenMapPoints(
-										MKMapPointForCoordinate(multicoords[i]),
-										MKMapPointForCoordinate(multicoords[i+1])     );
-							NSLog(@"Distance : %f",distanceBetween2Points);
-							distanceSequence = distanceSequence + distanceBetween2Points;
+							multicoords[i].latitude = 0;
+							multicoords[i].longitude = 0;
 						}
-					else if (floor(fabs(multicoords[i].latitude)) != 0 &&
-						 floor(fabs(multicoords[i].longitude)) != 0 &&
-						 floor(fabs(multicoords[i+1].latitude)) == 0 &&
-						 floor(fabs(multicoords[i+1].longitude)) == 0
-						 )
-						{
-							// Création d'un pin "Pause" sur la carte
-							MKPointAnnotation *pauseAnnotation = [[[MKPointAnnotation alloc] init] autorelease];
-							
-							pauseAnnotation.coordinate = multicoords[i];
-							pauseAnnotation.title      = @"Pause";
-							
-							[maMapView addAnnotation:pauseAnnotation];
-						}
-					}
-					if (sequenceNumber==1)
-					{
-						// Distance Aller
-						distanceA.text = [NSString stringWithFormat:@"%.02f km", distanceSequence/1000];
-					}
-					else if (sequenceNumber==2)
-					{
-						// Distance Retour
-						distanceR.text = [NSString stringWithFormat:@"%.02f km", distanceSequence/1000];
-					}
-					distanceTotale = distanceTotale + distanceSequence;
-					
 				}
+				
+				// Calcul de la distance du segment
+				distanceSegment = [self getDistance:multicoords];
+				
+				// Estimation de la distance parcourue
+				distanceParcourue = distanceParcourue + [self getDistanceCovered:multicoords];
+				if (distanceParcourue == 0 &&
+					segmentNumber==2) {
+					distanceParcourue = distanceParcourue + distanceTotale;
+				}
+				
+				NSLog(@"distance parcourue : %f",[self getDistanceCovered:multicoords]);
+
+				
+				if (segmentNumber==1)
+				{
+					// Distance Aller
+					distanceA.text = [NSString stringWithFormat:@"%.02f km", distanceSegment/1000];
+				}
+				else if (segmentNumber==2)
+				{
+					// Distance Retour
+					distanceR.text = [NSString stringWithFormat:@"%.02f km", distanceSegment/1000];
+				}
+				distanceTotale = distanceTotale + distanceSegment;
+					
+			}
 		 }
 	NSLog(@"distanceTotale : %f",distanceTotale);
 
@@ -239,6 +234,98 @@ int nb_points = 5;
 	
 }
 
+- (CLLocationDistance) getDistance: (CLLocationCoordinate2D *)arrayCoords;
+{
+	int i;
+	CLLocationDistance retDistance = 0;
+	CLLocationDistance distanceBetween2Points = 0;
+
+	for (i=0; i<kMaxPoints; i++)
+	{
+				
+		if (arrayCoords[i].latitude != 0 &&
+			arrayCoords[i+1].latitude != 0 &&
+			i<99)
+		{
+			// Calcul de la distance entre deux points consécutifs
+			distanceBetween2Points = MKMetersBetweenMapPoints(
+															  MKMapPointForCoordinate(arrayCoords[i]),
+															  MKMapPointForCoordinate(arrayCoords[i+1])     );
+			retDistance = retDistance + distanceBetween2Points;
+		}
+		else if (arrayCoords[i].latitude != 0 &&
+				 arrayCoords[i+1].latitude == 0 
+				 )
+		{
+			// Création d'un pin "Pause" sur la carte
+			MKPointAnnotation *pauseAnnotation = [[[MKPointAnnotation alloc] init] autorelease];
+			
+			pauseAnnotation.coordinate = arrayCoords[i];
+			pauseAnnotation.title      = @"Pause";
+			
+			[maMapView addAnnotation:pauseAnnotation];
+		}
+	}
+	return retDistance;
+	
+}
+
+
+- (CLLocationDistance) getDistanceCovered: (CLLocationCoordinate2D *)arrayCoords;
+{
+	int i, extrapolatedLocationPoint;
+	float minInterval=99999999;
+	float tempInterval;
+	CLLocationDistance retDistance = 0;
+	
+	// Recherche de l'occurrence du tableau la plus proche de la position utilisateur
+	for (i=0; i<kMaxPoints; i++)
+	{
+		
+		if (arrayCoords[i].latitude != 0)
+		{
+			// Calcul de la distance entre chaque point et la position de l'utilisateur
+			tempInterval = MKMetersBetweenMapPoints(
+													MKMapPointForCoordinate(arrayCoords[i]),
+													MKMapPointForCoordinate(maMapView.userLocation.coordinate)
+													);
+			NSLog(@"tempInterval : %f",tempInterval);
+
+			if (tempInterval < minInterval) 
+			{
+				extrapolatedLocationPoint = i;
+				minInterval = tempInterval;
+			}
+		}
+	}
+	NSLog(@"extrapolatedLocationPoint : %d",extrapolatedLocationPoint);
+
+	
+	if (minInterval < 500) 
+	{
+		// Calcul de la distance jusqu'au plus proche point
+		for (i=0; i<extrapolatedLocationPoint - 1; i++)
+		{
+				retDistance = retDistance + MKMetersBetweenMapPoints(
+																	 MKMapPointForCoordinate(arrayCoords[i]),
+																	 MKMapPointForCoordinate(arrayCoords[i+1])     );
+		}
+		
+		// Ajout de la distance avec le point le plus proche
+		retDistance = retDistance + MKMetersBetweenMapPoints(
+										MKMapPointForCoordinate(arrayCoords[extrapolatedLocationPoint]),
+										MKMapPointForCoordinate(maMapView.userLocation.coordinate));
+		
+		return retDistance;
+	}
+	// Si on n'a pas trouvé de point concordant, on retourne une distance nulle
+	else {
+		return 0;
+	}
+
+		
+}
+
 #pragma mark -
 #pragma mark NSURLConnection Delegates
 - (void)connection:(NSURLConnection *)conn didReceiveResponse:(NSURLResponse *)response
@@ -269,8 +356,8 @@ int nb_points = 5;
 	
 	[payload setLength:0];
 	UIAlertView *alert = [[UIAlertView alloc]
-						  initWithTitle:@"Problème de connexion"
-						  message:@"La connexion au site R&C a été interrompue. Veuillez réessayer."
+						  initWithTitle:NSLocalizedString(@"Network problem",@"")
+						  message:NSLocalizedString(@"Connexion to R&C site failed. Please try again",@"")
 						  delegate:self 
 						  cancelButtonTitle:@"OK"
 						  otherButtonTitles:nil];
@@ -305,13 +392,14 @@ int nb_points = 5;
 // A l'appui du bouton : Màj
 - (IBAction)refreshCarte:(id)sender {  
 		
-	// Suppression des annotations sauf la position de l'utilisateur
-	NSMutableArray *toRemove = [NSMutableArray arrayWithCapacity:10];
-	for (id annotation in maMapView.annotations)
-		if (annotation != maMapView.userLocation)
+	// Suppression des annotations sauf la position de l'utilisateur et la position Pause
+	NSMutableArray *toRemove = [NSMutableArray arrayWithCapacity:nb_points];
+	for (id <MKAnnotation>annotation in maMapView.annotations)
+		if (annotation != maMapView.userLocation &&
+			annotation.title != @"Pause")
 			[toRemove addObject:annotation];
 	[maMapView removeAnnotations:toRemove];
-		
+			
 	// Récupération KML et màj des annotations	
 	[self getKML];
 }
@@ -346,9 +434,8 @@ int nb_points = 5;
 	[distanceR release];
 	[maMapView release];
 	[payload release];
-	[connection release];
 	[request release];
-    [super dealloc];
+	[super dealloc];
 }
 
 #pragma mark MKMapViewDelegate
@@ -358,10 +445,26 @@ int nb_points = 5;
     return [kml viewForOverlay:overlay];
 }
 
-- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>)annotation
-{
-	return [kml viewForAnnotation:annotation];
-}
 
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>)annotation
+	{
+		// Si c'est la punaise "Pause", affichage en vert
+		if (annotation.title == @"Pause")
+		{
+			MKPinAnnotationView *PauseView=[[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"Pause"] autorelease];
+			
+			PauseView.pinColor = MKPinAnnotationColorGreen;
+			PauseView.animatesDrop=NO;
+			PauseView.canShowCallout = YES;
+			PauseView.calloutOffset = CGPointMake(-5, 5);
+			
+			return PauseView;
+		}
+		// Sinon, on laisse KMLParser gérer :)
+		else
+		{
+			return [kml viewForAnnotation:annotation];
+		}
+	}
 
 @end

@@ -1005,7 +1005,7 @@ static void strToCoords(NSString *str, CLLocationCoordinate2D **coordsOut, NSUIn
             MKPinAnnotationView *pin =
                 [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil];
             pin.canShowCallout = YES;
-            pin.animatesDrop = YES;
+            pin.animatesDrop = NO;
             annotationView = pin;
         }
     }

@@ -1,0 +1,26 @@
+/* 
+   Localizable.strings
+   iBulot
+
+   Created by Jocelyn Nourry on 26/10/10.
+   Copyright 2010 Personal. All rights reserved.
+ */
+
+/* URL connexion went down. */
+"Connexion to R&C site failed. Please try again" = "La connection au site R&C a été interrompue. Veuillez réessayer.";
+
+
+/* Connexion PB */
+"Network problem" = "Problème réseau";
+
+
+/* URL connexion init failed */
+"Init of URL connexion failed" = "La connection au site R&C n'a pas pu être établie";
+
+
+/* User location */
+"My location" = "Ma Position";
+
+
+/* Device warning */
+"This app only works on iPhone devices" = "Cette application ne fonctionne que sur iPhone";
