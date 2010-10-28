@@ -71,9 +71,7 @@ BOOL shakeStatus=YES;
 	// Affichage de la position utilisateur
 	maMapView.showsUserLocation = YES;
 	maMapView.userLocation.title = NSLocalizedString(@"My Location",@"");
-		
-	// Recherche du tracé et des points
-	[self getKML];
+
 	
 	// Gestion de l'accéléromètre
 	[[UIAccelerometer sharedAccelerometer] setUpdateInterval:1.0/kAccelerometerFrequency];
@@ -81,6 +79,16 @@ BOOL shakeStatus=YES;
 	  
 	 
 }
+
+// To update Map at launch and when you come back from Pref View
+- (void)viewDidAppear:(BOOL)animated {
+	[super viewDidAppear:animated];
+	
+	// Recherche du tracé et des points
+	[self getKML];
+
+}
+
 
 #pragma mark -
 #pragma mark Autres méthodes
