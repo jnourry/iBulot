@@ -18,15 +18,20 @@
 	
 	IBOutlet UISlider *monSlider;
 	IBOutlet UILabel *valeurSlider;
+	IBOutlet UISwitch *shakeSwitch;
+
 }
 
 @property (nonatomic, assign) id <FlipsideViewControllerDelegate> delegate;
 @property (nonatomic, retain) IBOutlet UISlider *monSlider;  
 @property (nonatomic, retain) IBOutlet UILabel *valeurSlider;  
+@property (nonatomic, retain) IBOutlet UISwitch *shakeSwitch;  
 
 
 - (IBAction)done:(id)sender;
 - (IBAction)updateSlider:(UISlider *)sender;
+- (IBAction)updateSwitch:(UISwitch *)sender;
+
 
 @end
 

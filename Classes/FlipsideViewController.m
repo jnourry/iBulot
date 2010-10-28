@@ -9,22 +9,34 @@
 #import "FlipsideViewController.h"
 
 extern int nb_points;
+extern BOOL shakeStatus;
 
 @implementation FlipsideViewController
 
 @synthesize delegate;
 @synthesize monSlider;
 @synthesize valeurSlider;
+@synthesize shakeSwitch;
 
 
 - (void)viewDidLoad {
     [super viewDidLoad];
 		
+	// Récupération du nombre de points
 	if (nb_points > 0)
 		{
 		monSlider.value = nb_points;
 		valeurSlider.text = [NSString stringWithFormat:@"%d", nb_points];
 		}
+	
+	// Récupération du statut du switch
+	if (shakeStatus == YES) 
+	{
+		[shakeSwitch setOn:YES animated:NO];
+	}
+	else {
+		[shakeSwitch setOn:NO animated:NO];
+	}
 			
     self.view.backgroundColor = [UIColor viewFlipsideBackgroundColor];      
 }
@@ -39,6 +51,17 @@ extern int nb_points;
 	nb_points = (int)[sender value];
 	 
 	valeurSlider.text = [NSString stringWithFormat:@"%d", nb_points];
+}
+
+// Dès qu'on change la valeur du Switch
+- (IBAction)updateSwitch:(UISwitch *)sender {
+	if (sender.on) 
+	{
+		shakeStatus = YES;
+	}
+	else {
+		shakeStatus = NO;
+	}
 }
 
 - (void)didReceiveMemoryWarning {
@@ -65,6 +88,9 @@ extern int nb_points;
 
 
 - (void)dealloc {
+	[monSlider release];
+	[valeurSlider release];
+	[shakeSwitch release];
     [super dealloc];
 }
 

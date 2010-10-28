@@ -9,11 +9,21 @@
 #import "MainViewController.h"
 #import <MapKit/MapKit.h>
 
-#define kMaxPoints 100
+#define kMaxPoints						100
+
+// Accelerometer constants
+#define kAccelerometerFrequency			40
+#define kFilteringFactor				0.1
+#define kMinEraseInterval				2.0
+#define kEraseAccelerationThreshold		2.0
+
 
 // Déclaration des globales par défaut
 // - nombre d'annotations
 int nb_points = 5;
+// - Shake YES or NO
+BOOL shakeStatus=YES;
+
 
 @implementation MainViewController
 
@@ -65,6 +75,11 @@ int nb_points = 5;
 	// Recherche du tracé et des points
 	[self getKML];
 	
+	// Gestion de l'accéléromètre
+	[[UIAccelerometer sharedAccelerometer] setUpdateInterval:1.0/kAccelerometerFrequency];
+	[[UIAccelerometer sharedAccelerometer] setDelegate:self];
+	  
+	 
 }
 
 #pragma mark -
@@ -75,6 +90,17 @@ int nb_points = 5;
 	UIApplication* app = [UIApplication sharedApplication];
 	app.networkActivityIndicatorVisible = YES;
 	
+	
+	// Suppression des annotations sauf la position de l'utilisateur et la position Pause
+	NSMutableArray *toRemove = [NSMutableArray arrayWithCapacity:nb_points];
+	for (id <MKAnnotation>annotation in maMapView.annotations)
+		if (annotation != maMapView.userLocation &&
+			annotation.title != @"Pause")
+			[toRemove addObject:annotation];
+	[maMapView removeAnnotations:toRemove];
+	
+	
+	// Récupération du fichier KML à traiter
 	NSString *pathKML = [NSString stringWithFormat:@"http://www.rollers-coquillages.org/getkml.php?nb=%d",nb_points];
 	
 	request = [NSURLRequest requestWithURL:[NSURL URLWithString:pathKML]
@@ -186,12 +212,16 @@ int nb_points = 5;
 				if (segmentNumber==1)
 				{
 					// Distance Aller
-					distanceA.text = [NSString stringWithFormat:@"%.02f km", distanceSegment/1000];
+					distanceA.text = [NSString stringWithFormat:@"%@ : %.02f km",
+									  NSLocalizedString(@"First Part",@""),
+									  distanceSegment/1000];
 				}
 				else if (segmentNumber==2)
 				{
 					// Distance Retour
-					distanceR.text = [NSString stringWithFormat:@"%.02f km", distanceSegment/1000];
+					distanceR.text = [NSString stringWithFormat:@"%@ : %.02f km",
+									  NSLocalizedString(@"Second Part",@""),
+									  distanceSegment/1000];
 				}
 				distanceTotale = distanceTotale + distanceSegment;
 					
@@ -289,7 +319,7 @@ int nb_points = 5;
 													MKMapPointForCoordinate(arrayCoords[i]),
 													MKMapPointForCoordinate(maMapView.userLocation.coordinate)
 													);
-			NSLog(@"tempInterval : %f",tempInterval);
+			//NSLog(@"tempInterval : %f",tempInterval);
 
 			if (tempInterval < minInterval) 
 			{
@@ -372,6 +402,40 @@ int nb_points = 5;
 }
 
 
+	 
+#pragma mark -
+#pragma mark Accelerometer Delegates
+- (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration{
+	UIAccelerationValue length,x,y,z;
+	UIAccelerationValue myAccelerometer[3];
+	
+	// Lowpass filter
+	myAccelerometer[0] = acceleration.x * kFilteringFactor + myAccelerometer[0] * (1.0 - kFilteringFactor);
+	myAccelerometer[1] = acceleration.y * kFilteringFactor + myAccelerometer[1] * (1.0 - kFilteringFactor);
+	myAccelerometer[2] = acceleration.z * kFilteringFactor + myAccelerometer[2] * (1.0 - kFilteringFactor);
+	
+	// Compute values of 3 axes (with a high pass simple filter)
+	x = acceleration.x - myAccelerometer[0];
+	y = acceleration.y - myAccelerometer[1];
+	z = acceleration.z - myAccelerometer[2];
+	
+	// Compute intensity of acceleration
+	length = sqrt(x*x + y*y + z*z);
+	
+	// Update map only
+	if ((length >= kEraseAccelerationThreshold) &&
+		(CFAbsoluteTimeGetCurrent() > lastTime + kMinEraseInterval)){
+		if (shakeStatus == YES) {
+			NSLog(@"Dans Accélération -> OK");
+			[self getKML];
+		}
+		lastTime = CFAbsoluteTimeGetCurrent();
+	}
+	
+	
+}
+	 
+	 
 - (void)flipsideViewControllerDidFinish:(FlipsideViewController *)controller {
     
 	[self dismissModalViewControllerAnimated:YES];
@@ -390,16 +454,8 @@ int nb_points = 5;
 }
 
 // A l'appui du bouton : Màj
-- (IBAction)refreshCarte:(id)sender {  
-		
-	// Suppression des annotations sauf la position de l'utilisateur et la position Pause
-	NSMutableArray *toRemove = [NSMutableArray arrayWithCapacity:nb_points];
-	for (id <MKAnnotation>annotation in maMapView.annotations)
-		if (annotation != maMapView.userLocation &&
-			annotation.title != @"Pause")
-			[toRemove addObject:annotation];
-	[maMapView removeAnnotations:toRemove];
-			
+- (IBAction)refreshCarte:(id)sender {  	
+	
 	// Récupération KML et màj des annotations	
 	[self getKML];
 }

@@ -11,11 +11,13 @@
 #import "KMLParser.h"
 
 
-@interface MainViewController : UIViewController <FlipsideViewControllerDelegate> {
+@interface MainViewController : UIViewController <FlipsideViewControllerDelegate,UIAccelerometerDelegate> {
 	IBOutlet MKMapView *maMapView;
 	IBOutlet UIButton *refreshButton;
 	IBOutlet UILabel *distanceA;
 	IBOutlet UILabel *distanceR;
+	CFTimeInterval lastTime;
+
 	
 	KMLParser *kml;
 	
@@ -36,6 +38,10 @@
 - (void)connection:(NSURLConnection *)conn didReceiveData:(NSData *)data;
 - (void)connectionDidFinishLoading:(NSURLConnection *)conn;
 - (void)connection:(NSURLConnection *)conn didFailWithError:(NSError *)error;
+
+#pragma mark -
+#pragma mark Accelerometer Delegates
+- (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration;
 
 #pragma mark -
 #pragma mark Autres méthodes

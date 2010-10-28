@@ -24,3 +24,11 @@
 
 /* Device warning */
 "This app only works on iPhone devices" = "Cette application ne fonctionne que sur iPhone";
+
+
+/* First part of the trip */
+"First Part" = "Aller ";
+
+
+/* Second part of the trip */
+"Second Part" = "Retour";
