@@ -282,6 +282,15 @@ BOOL shakeStatus=YES;
 	
 }
 
+- (BOOL)pauseAnnotationExists;
+{
+	BOOL retval=NO;
+	for (id <MKAnnotation>annotation in maMapView.annotations)
+		if (annotation.title == @"Pause")
+			retval = YES;
+	return retval;
+}
+
 - (CLLocationDistance) getDistance: (CLLocationCoordinate2D *)arrayCoords;
 {
 	int i;
@@ -305,13 +314,16 @@ BOOL shakeStatus=YES;
 				 arrayCoords[i+1].latitude == 0 
 				 )
 		{
-			// Création d'un pin "Pause" sur la carte
-			MKPointAnnotation *pauseAnnotation = [[[MKPointAnnotation alloc] init] autorelease];
+			if ([self pauseAnnotationExists] == FALSE)
+			{
+				// Création d'un pin "Pause" sur la carte seulement si il n'existe pas déjà...
+				MKPointAnnotation *pauseAnnotation = [[[MKPointAnnotation alloc] init] autorelease];
 			
-			pauseAnnotation.coordinate = arrayCoords[i];
-			pauseAnnotation.title      = @"Pause";
+				pauseAnnotation.coordinate = arrayCoords[i];
+				pauseAnnotation.title      = @"Pause";
 			
-			[maMapView addAnnotation:pauseAnnotation];
+				[maMapView addAnnotation:pauseAnnotation];
+			}
 		}
 	}
 	return retDistance;
@@ -425,8 +437,7 @@ BOOL shakeStatus=YES;
 #pragma mark Accelerometer Delegates
 - (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration{
 	UIAccelerationValue length,x,y,z;
-	UIAccelerationValue myAccelerometer[3];
-	
+		
 	// Lowpass filter
 	myAccelerometer[0] = acceleration.x * kFilteringFactor + myAccelerometer[0] * (1.0 - kFilteringFactor);
 	myAccelerometer[1] = acceleration.y * kFilteringFactor + myAccelerometer[1] * (1.0 - kFilteringFactor);
@@ -449,6 +460,8 @@ BOOL shakeStatus=YES;
 		}
 		lastTime = CFAbsoluteTimeGetCurrent();
 	}
+	
+	//[myAccelerometer release];
 	
 	
 }

@@ -331,7 +331,7 @@ static void strToCoords(NSString *str, CLLocationCoordinate2D **coordsOut, NSUIn
 
 + (KMLParser *)parseKMLAtURL:(NSURL *)url
 {
-    NSXMLParser *xml = [[NSXMLParser alloc] initWithContentsOfURL:url];
+    NSXMLParser *xml =[[NSXMLParser alloc] initWithContentsOfURL:url];
     KMLParser *parser = [[KMLParser alloc] init];
     [xml setDelegate:parser];
     [xml parse];
@@ -341,7 +341,7 @@ static void strToCoords(NSString *str, CLLocationCoordinate2D **coordsOut, NSUIn
 
 + (KMLParser *)parseKMLAtPath:(NSString *)path
 {
-    NSURL *url = [NSURL fileURLWithPath:path];
+    NSURL *url = [[NSURL fileURLWithPath:path] autorelease];
     return [KMLParser parseKMLAtURL:url];
 }
 

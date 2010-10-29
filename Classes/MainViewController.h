@@ -18,6 +18,7 @@
 	IBOutlet UILabel *distanceR;
 	CFTimeInterval lastTime;
 
+	UIAccelerationValue myAccelerometer[3];
 	
 	KMLParser *kml;
 	
@@ -47,6 +48,7 @@
 #pragma mark Autres méthodes
 - (void)getKML;
 - (void)majCarte;
+- (BOOL)pauseAnnotationExists;
 - (CLLocationDistance) getDistance: (CLLocationCoordinate2D *)arrayCoords;
 - (CLLocationDistance) getDistanceCovered: (CLLocationCoordinate2D *)arrayCoords;
 
