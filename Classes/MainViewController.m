@@ -21,6 +21,8 @@
 // Déclaration des globales par défaut
 // - nombre d'annotations
 int nb_points = 5;
+int old_nb_points = 10;
+
 // - Shake YES or NO
 BOOL shakeStatus=YES;
 
@@ -84,11 +86,19 @@ BOOL shakeStatus=YES;
 - (void)viewDidAppear:(BOOL)animated {
 	[super viewDidAppear:animated];
 	
-	// Recherche du tracé et des points
-	[self getKML];
+	if (nb_points != old_nb_points) {
+		// Recherche du tracé et des points
+		[self getKML];
+	}
 
 }
 
+// Save the number of points used for the current map
+- (void)viewDidDisappear:(BOOL)animated {
+	[super viewDidDisappear:animated];
+	
+	old_nb_points = nb_points;
+}
 
 #pragma mark -
 #pragma mark Autres méthodes
