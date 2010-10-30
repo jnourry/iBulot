@@ -64,7 +64,7 @@ BOOL shakeStatus=YES;
 	else
 	{
 		// After first run ;)
-		nb_points = [userPrefs intForKey:@"nb_points"];
+		nb_points = [userPrefs integerForKey:@"nb_points"];
 		shakeStatus = [userPrefs boolForKey:@"shakeStatus"];
 	}
 

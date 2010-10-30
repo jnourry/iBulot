@@ -19,7 +19,6 @@
 	IBOutlet UISlider *monSlider;
 	IBOutlet UILabel *valeurSlider;
 	IBOutlet UISwitch *shakeSwitch;
-
 }
 
 @property (nonatomic, assign) id <FlipsideViewControllerDelegate> delegate;

@@ -8,10 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		013B1E421279F50200B97A3E /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 013B1E411279F50200B97A3E /* icon.png */; };
-		01780259127B42E200197E8B /* FlipsideView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01780258127B42E200197E8B /* FlipsideView.xib */; };
 		0178025F127B442300197E8B /* MainView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 280E754B0DD40C5E005A515E /* MainView.xib */; };
 		01A0375D1264D7C300C6506C /* KMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 01A0375C1264D7C300C6506C /* KMLParser.m */; };
 		01A3E805126DFFD200DC61EF /* refresh@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 01A3E804126DFFD200DC61EF /* refresh@2x.png */; };
+		01D38C0F127C60EA00C1BE0C /* FlipsideView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01D38C0E127C60EA00C1BE0C /* FlipsideView.xib */; };
 		01DD4EC2126374E200CF0CED /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01DD4EC1126374E200CF0CED /* CoreLocation.framework */; };
 		01DD4F651263807300CF0CED /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01DD4F641263807300CF0CED /* MapKit.framework */; };
 		01E3760012776A5E00F079CB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 01E375FF12776A5E00F079CB /* Localizable.strings */; };
@@ -39,10 +39,10 @@
 
 /* Begin PBXFileReference section */
 		013B1E411279F50200B97A3E /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
-		0178025A127B42E900197E8B /* fr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fr; path = fr.lproj/FlipsideView.xib; sourceTree = "<group>"; };
 		01A0375B1264D7C300C6506C /* KMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KMLParser.h; sourceTree = "<group>"; };
 		01A0375C1264D7C300C6506C /* KMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KMLParser.m; sourceTree = "<group>"; };
 		01A3E804126DFFD200DC61EF /* refresh@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "refresh@2x.png"; sourceTree = "<group>"; };
+		01D38C10127C60F200C1BE0C /* fr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fr; path = fr.lproj/FlipsideView.xib; sourceTree = "<group>"; };
 		01DD4EC1126374E200CF0CED /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		01DD4F641263807300CF0CED /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		01E375FD12776A4D00F079CB /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -155,7 +155,7 @@
 			children = (
 				013B1E411279F50200B97A3E /* icon.png */,
 				01A3E804126DFFD200DC61EF /* refresh@2x.png */,
-				01780258127B42E200197E8B /* FlipsideView.xib */,
+				01D38C0E127C60EA00C1BE0C /* FlipsideView.xib */,
 				280E754B0DD40C5E005A515E /* MainView.xib */,
 				280E754C0DD40C5E005A515E /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* iBulot-Info.plist */,
@@ -202,6 +202,9 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = personal;
+			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iBulot" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
@@ -228,7 +231,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01780259127B42E200197E8B /* FlipsideView.xib in Resources */,
+				01D38C0F127C60EA00C1BE0C /* FlipsideView.xib in Resources */,
 				0178025F127B442300197E8B /* MainView.xib in Resources */,
 				280E754F0DD40C5E005A515E /* MainWindow.xib in Resources */,
 				01A3E805126DFFD200DC61EF /* refresh@2x.png in Resources */,
@@ -255,11 +258,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		01780258127B42E200197E8B /* FlipsideView.xib */ = {
+		01D38C0E127C60EA00C1BE0C /* FlipsideView.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
 				280E754A0DD40C5E005A515E /* English */,
-				0178025A127B42E900197E8B /* fr */,
+				01D38C10127C60F200C1BE0C /* fr */,
 			);
 			name = FlipsideView.xib;
 			sourceTree = "<group>";
