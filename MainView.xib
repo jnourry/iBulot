@@ -131,6 +131,7 @@
 						<reference key="IBUIHighlightedColor" ref="342548221"/>
 						<int key="IBUIBaselineAdjustment">1</int>
 						<float key="IBUIMinimumFontSize">9</float>
+						<int key="IBUITextAlignment">1</int>
 					</object>
 					<object class="IBUILabel" id="266860212">
 						<reference key="NSNextResponder" ref="883825266"/>
@@ -151,6 +152,7 @@
 						<reference key="IBUIHighlightedColor" ref="342548221"/>
 						<int key="IBUIBaselineAdjustment">1</int>
 						<float key="IBUIMinimumFontSize">9</float>
+						<int key="IBUITextAlignment">1</int>
 					</object>
 				</object>
 				<string key="NSFrameSize">{320, 460}</string>
