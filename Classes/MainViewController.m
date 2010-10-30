@@ -17,6 +17,9 @@
 #define kMinEraseInterval				2.0
 #define kEraseAccelerationThreshold		2.0
 
+// PI
+#define pi								3.141592
+
 
 // Déclaration des globales par défaut
 // - nombre d'annotations
@@ -198,7 +201,6 @@ BOOL shakeStatus=YES;
 	app.networkActivityIndicatorVisible = NO;
 	
 	kml = [[KMLParser parseKMLAtPath:pathFichierTemp] retain];
-
 	
 	CLLocationDistance distanceTotale = 0;
 	CLLocationDistance distanceParcourue = 0;
@@ -221,6 +223,12 @@ BOOL shakeStatus=YES;
 			{
 				segmentNumber++;
 					
+				// Init du tableau
+				for (i=0; i<kMaxPoints; i++) {
+					multicoords[i].latitude = 0;
+					multicoords[i].longitude = 0;
+				}
+				
 				// Récupération des points dans le MKPolyline (à l'aide d'une méthode héritée de MKMultiPoint)
 				[placemark getCoordinates:multicoords range:multirange];
 				
@@ -233,7 +241,7 @@ BOOL shakeStatus=YES;
 							multicoords[i].longitude = 0;
 						}
 				}
-				
+
 				// Calcul de la distance du segment
 				distanceSegment = [self getDistance:multicoords];
 				
@@ -244,7 +252,7 @@ BOOL shakeStatus=YES;
 					distanceParcourue = distanceParcourue + distanceTotale;
 				}
 				
-				NSLog(@"distance parcourue : %f",[self getDistanceCovered:multicoords]);
+				NSLog(@"distance parcourue : %f",distanceParcourue);
 
 				
 				if (segmentNumber==1)
@@ -323,7 +331,7 @@ BOOL shakeStatus=YES;
 				
 		if (arrayCoords[i].latitude != 0 &&
 			arrayCoords[i+1].latitude != 0 &&
-			i<99)
+			i<kMaxPoints - 1)
 		{
 			// Calcul de la distance entre deux points consécutifs
 			distanceBetween2Points = MKMetersBetweenMapPoints(
@@ -354,12 +362,15 @@ BOOL shakeStatus=YES;
 
 - (CLLocationDistance) getDistanceCovered: (CLLocationCoordinate2D *)arrayCoords;
 {
-	int i, extrapolatedLocationPoint;
+	int i, closestLocationPoint;
 	float minInterval=99999999;
 	float tempInterval;
+	float lastCourseAngle=0;
+	float userCourseAngle;
 	CLLocationDistance retDistance = 0;
 	
 	// Recherche de l'occurrence du tableau la plus proche de la position utilisateur
+	// il s'agit dans le parcours du point juste avant la position de l'utilisateur
 	for (i=0; i<kMaxPoints; i++)
 	{
 		
@@ -372,20 +383,34 @@ BOOL shakeStatus=YES;
 													);
 			//NSLog(@"tempInterval : %f",tempInterval);
 
-			if (tempInterval < minInterval) 
+			// Calculate angle between course point and user location point
+			userCourseAngle = (180 / pi) * [self estimateCourse:arrayCoords[i] toPoint:maMapView.userLocation.coordinate];
+			//NSLog(@"course utilisateur : %f",userCourseAngle);
+
+			if (i > 0)
+				lastCourseAngle = (180 / pi) * [self estimateCourse:arrayCoords[i-1] toPoint:arrayCoords[i]];
+									
+			//NSLog(@"course carte : %f",lastCourseAngle);
+
+			if (tempInterval < minInterval)
 			{
-				extrapolatedLocationPoint = i;
 				minInterval = tempInterval;
+				if (fabs(userCourseAngle - lastCourseAngle) < 180) {
+					closestLocationPoint = i;
+				}
 			}
 		}
 	}
-	NSLog(@"extrapolatedLocationPoint : %d",extrapolatedLocationPoint);
+	NSLog(@"closestLocationPoint : %d",closestLocationPoint);
+	NSLog(@"minInterval : %f",minInterval);
 
-	
-	if (minInterval < 500) 
+
+	// Only if there's a real closest location found
+	if ((minInterval < 1000) &&
+		(closestLocationPoint != 0))
 	{
 		// Calcul de la distance jusqu'au plus proche point
-		for (i=0; i<extrapolatedLocationPoint - 1; i++)
+		for (i=0; i<closestLocationPoint - 1; i++)
 		{
 				retDistance = retDistance + MKMetersBetweenMapPoints(
 																	 MKMapPointForCoordinate(arrayCoords[i]),
@@ -394,7 +419,7 @@ BOOL shakeStatus=YES;
 		
 		// Ajout de la distance avec le point le plus proche
 		retDistance = retDistance + MKMetersBetweenMapPoints(
-										MKMapPointForCoordinate(arrayCoords[extrapolatedLocationPoint]),
+										MKMapPointForCoordinate(arrayCoords[closestLocationPoint]),
 										MKMapPointForCoordinate(maMapView.userLocation.coordinate));
 		
 		return retDistance;
@@ -403,9 +428,27 @@ BOOL shakeStatus=YES;
 	else {
 		return 0;
 	}
-
 		
 }
+
+// Compute the estimated course between 2 points
+- (float)estimateCourse:(CLLocationCoordinate2D)fromPoint toPoint:(CLLocationCoordinate2D)toPoint
+{
+	float course = fmod(atan2(sin(fromPoint.longitude-toPoint.longitude)*cos(toPoint.latitude),cos(fromPoint.latitude)*sin(toPoint.latitude)-
+							  sin(fromPoint.latitude)*cos(toPoint.latitude)*cos(fromPoint.longitude-toPoint.longitude)), 2 * pi);
+		
+	// quick hack for symetric sign error. needs elegancy tweak later
+	if(sin(toPoint.longitude - fromPoint.longitude) < 0.0)
+		course = 2 * pi - course;
+	if(course < 0.0)
+		course = 2 * pi - course;
+	if(course > 2 * pi)
+		course = course - 2 * pi;
+	
+	return(course);
+}
+
+
 
 #pragma mark -
 #pragma mark NSURLConnection Delegates

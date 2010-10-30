@@ -52,6 +52,7 @@
 - (BOOL)pauseAnnotationExists;
 - (CLLocationDistance) getDistance: (CLLocationCoordinate2D *)arrayCoords;
 - (CLLocationDistance) getDistanceCovered: (CLLocationCoordinate2D *)arrayCoords;
+- (float)estimateCourse:(CLLocationCoordinate2D)fromPoint toPoint:(CLLocationCoordinate2D)toPoint;
 
 
 @property (nonatomic, retain) UIButton *refreshButton;
