@@ -51,6 +51,11 @@ extern BOOL shakeStatus;
 	nb_points = (int)[sender value];
 	 
 	valeurSlider.text = [NSString stringWithFormat:@"%d", nb_points];
+	
+	// Save Slider value
+	NSUserDefaults *userPrefs = [NSUserDefaults standardUserDefaults];
+	[userPrefs setInteger:nb_points forKey:@"nb_points"];
+	[userPrefs synchronize];
 }
 
 // Dès qu'on change la valeur du Switch
@@ -62,6 +67,11 @@ extern BOOL shakeStatus;
 	else {
 		shakeStatus = NO;
 	}
+	
+	// Save Switch state
+	NSUserDefaults *userPrefs = [NSUserDefaults standardUserDefaults];
+	[userPrefs setBool:shakeStatus forKey:@"shakeStatus"];
+	[userPrefs synchronize];
 }
 
 - (void)didReceiveMemoryWarning {

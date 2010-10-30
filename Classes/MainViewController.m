@@ -53,6 +53,53 @@ BOOL shakeStatus=YES;
 		[alert release];
 		}
 	
+	// Get user preferences
+	NSUserDefaults *userPrefs = [NSUserDefaults standardUserDefaults];
+	if ([userPrefs boolForKey:@"first_run"] == 0)
+	{
+		// First run
+		[userPrefs setBool:1 forKey:@"first_run"];
+		[userPrefs synchronize];
+	}
+	else
+	{
+		// After first run ;)
+		nb_points = [userPrefs intForKey:@"nb_points"];
+		shakeStatus = [userPrefs boolForKey:@"shakeStatus"];
+	}
+
+	// Init MapView settings
+	[self initMap];
+		
+	// Gestion de l'accéléromètre
+	[[UIAccelerometer sharedAccelerometer] setUpdateInterval:1.0/kAccelerometerFrequency];
+	[[UIAccelerometer sharedAccelerometer] setDelegate:self];
+	 
+}
+
+// To update Map at launch and when you come back from FlipSide View
+- (void)viewDidAppear:(BOOL)animated {
+	[super viewDidAppear:animated];
+	
+	if (nb_points != old_nb_points) {
+		// Recherche du tracé et des points
+		[self getKML];
+	}
+
+}
+
+// Save the number of points used for the current map
+- (void)viewDidDisappear:(BOOL)animated {
+	[super viewDidDisappear:animated];
+	
+	old_nb_points = nb_points;
+}
+
+#pragma mark -
+#pragma mark Autres méthodes
+// Init Map
+- (void)initMap
+{
 	// Définir le zoom
 	MKCoordinateSpan span;
 	span.latitudeDelta=0.05;
@@ -73,35 +120,8 @@ BOOL shakeStatus=YES;
 	// Affichage de la position utilisateur
 	maMapView.showsUserLocation = YES;
 	maMapView.userLocation.title = NSLocalizedString(@"My Location",@"");
-
-	
-	// Gestion de l'accéléromètre
-	[[UIAccelerometer sharedAccelerometer] setUpdateInterval:1.0/kAccelerometerFrequency];
-	[[UIAccelerometer sharedAccelerometer] setDelegate:self];
-	  
-	 
 }
 
-// To update Map at launch and when you come back from Pref View
-- (void)viewDidAppear:(BOOL)animated {
-	[super viewDidAppear:animated];
-	
-	if (nb_points != old_nb_points) {
-		// Recherche du tracé et des points
-		[self getKML];
-	}
-
-}
-
-// Save the number of points used for the current map
-- (void)viewDidDisappear:(BOOL)animated {
-	[super viewDidDisappear:animated];
-	
-	old_nb_points = nb_points;
-}
-
-#pragma mark -
-#pragma mark Autres méthodes
 - (void)getKML
 {
 	// Affichage de la roue de recherche d'activité réseau
@@ -290,6 +310,7 @@ BOOL shakeStatus=YES;
 			retval = YES;
 	return retval;
 }
+
 
 - (CLLocationDistance) getDistance: (CLLocationCoordinate2D *)arrayCoords;
 {

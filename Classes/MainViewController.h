@@ -46,6 +46,7 @@
 
 #pragma mark -
 #pragma mark Autres méthodes
+- (void)initMap;
 - (void)getKML;
 - (void)majCarte;
 - (BOOL)pauseAnnotationExists;
