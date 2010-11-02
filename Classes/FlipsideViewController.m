@@ -97,6 +97,7 @@ extern BOOL shakeStatus;
 }
 */
 
+	
 
 - (void)dealloc {
 	[monSlider release];

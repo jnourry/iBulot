@@ -32,3 +32,7 @@
 
 /* Second part of the trip */
 "Second Part" = "Retour";
+
+
+/* Temp message while retrieving data */
+"Retrieving data" = "Chargement";

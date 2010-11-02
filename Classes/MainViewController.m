@@ -8,6 +8,7 @@
 
 #import "MainViewController.h"
 #import <MapKit/MapKit.h>
+#import <QuartzCore/QuartzCore.h>
 
 #define kMaxPoints						100
 
@@ -77,7 +78,22 @@ BOOL shakeStatus=YES;
 	// Gestion de l'accéléromètre
 	[[UIAccelerometer sharedAccelerometer] setUpdateInterval:1.0/kAccelerometerFrequency];
 	[[UIAccelerometer sharedAccelerometer] setDelegate:self];
-	 
+	
+	// Create an Activity Indicator
+	monSpinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+	[monSpinner setCenter:CGPointMake(80, 436)];
+	[self.view addSubview:monSpinner]; // spinner is not visible until started
+	
+	
+	// ADD LABEL
+	tempLabel = [[UILabel alloc] initWithFrame:CGRectMake(90, 421, 130, 30)];
+	[tempLabel setCenter:CGPointMake(160, 436)];
+	[tempLabel setText:NSLocalizedString(@"Retrieving data",@"")];
+	[tempLabel setTextAlignment:UITextAlignmentCenter];
+	tempLabel.backgroundColor = [UIColor colorWithWhite:0.25 alpha:1.0];
+	tempLabel.textColor = [UIColor whiteColor];
+	tempLabel.layer.cornerRadius = 8.0;
+	tempLabel.shadowColor = [UIColor grayColor];
 }
 
 // To update Map at launch and when you come back from FlipSide View
@@ -131,6 +147,12 @@ BOOL shakeStatus=YES;
 	UIApplication* app = [UIApplication sharedApplication];
 	app.networkActivityIndicatorVisible = YES;
 	
+	// Display custom activity indicator
+	[monSpinner startAnimating];
+	
+	// Display custom label
+	[self.view addSubview:tempLabel];
+
 	
 	// Suppression des annotations sauf la position de l'utilisateur et la position Pause
 	NSMutableArray *toRemove = [NSMutableArray arrayWithCapacity:nb_points];
@@ -170,7 +192,6 @@ BOOL shakeStatus=YES;
 		// Suppression de la roue de recherche d'activité réseau
 		UIApplication* app = [UIApplication sharedApplication];
 		app.networkActivityIndicatorVisible = NO;
-		
 	}
 }
 
@@ -200,10 +221,15 @@ BOOL shakeStatus=YES;
 	UIApplication* app = [UIApplication sharedApplication];
 	app.networkActivityIndicatorVisible = NO;
 	
+	// Stop custom activity indicator
+	[monSpinner stopAnimating];
+	
+	// Remove label
+	[tempLabel removeFromSuperview];
+	
 	kml = [[KMLParser parseKMLAtPath:pathFichierTemp] retain];
 	
 	CLLocationDistance distanceTotale = 0;
-	CLLocationDistance distanceParcourue = 0;
 	CLLocationDistance distanceSegment = 0;
 	CLLocationCoordinate2D multicoords[kMaxPoints];
 	
@@ -244,16 +270,6 @@ BOOL shakeStatus=YES;
 
 				// Calcul de la distance du segment
 				distanceSegment = [self getDistance:multicoords];
-				
-				// Estimation de la distance parcourue
-				distanceParcourue = distanceParcourue + [self getDistanceCovered:multicoords];
-				if (distanceParcourue == 0 &&
-					segmentNumber==2) {
-					distanceParcourue = distanceParcourue + distanceTotale;
-				}
-				
-				NSLog(@"distance parcourue : %f",distanceParcourue);
-
 				
 				if (segmentNumber==1)
 				{
@@ -358,96 +374,6 @@ BOOL shakeStatus=YES;
 	return retDistance;
 	
 }
-
-
-- (CLLocationDistance) getDistanceCovered: (CLLocationCoordinate2D *)arrayCoords;
-{
-	int i, closestLocationPoint;
-	float minInterval=99999999;
-	float tempInterval;
-	float lastCourseAngle=0;
-	float userCourseAngle;
-	CLLocationDistance retDistance = 0;
-	
-	// Recherche de l'occurrence du tableau la plus proche de la position utilisateur
-	// il s'agit dans le parcours du point juste avant la position de l'utilisateur
-	for (i=0; i<kMaxPoints; i++)
-	{
-		
-		if (arrayCoords[i].latitude != 0)
-		{
-			// Calcul de la distance entre chaque point et la position de l'utilisateur
-			tempInterval = MKMetersBetweenMapPoints(
-													MKMapPointForCoordinate(arrayCoords[i]),
-													MKMapPointForCoordinate(maMapView.userLocation.coordinate)
-													);
-			//NSLog(@"tempInterval : %f",tempInterval);
-
-			// Calculate angle between course point and user location point
-			userCourseAngle = (180 / pi) * [self estimateCourse:arrayCoords[i] toPoint:maMapView.userLocation.coordinate];
-			//NSLog(@"course utilisateur : %f",userCourseAngle);
-
-			if (i > 0)
-				lastCourseAngle = (180 / pi) * [self estimateCourse:arrayCoords[i-1] toPoint:arrayCoords[i]];
-									
-			//NSLog(@"course carte : %f",lastCourseAngle);
-
-			if (tempInterval < minInterval)
-			{
-				minInterval = tempInterval;
-				if (fabs(userCourseAngle - lastCourseAngle) < 180) {
-					closestLocationPoint = i;
-				}
-			}
-		}
-	}
-	NSLog(@"closestLocationPoint : %d",closestLocationPoint);
-	NSLog(@"minInterval : %f",minInterval);
-
-
-	// Only if there's a real closest location found
-	if ((minInterval < 1000) &&
-		(closestLocationPoint != 0))
-	{
-		// Calcul de la distance jusqu'au plus proche point
-		for (i=0; i<closestLocationPoint - 1; i++)
-		{
-				retDistance = retDistance + MKMetersBetweenMapPoints(
-																	 MKMapPointForCoordinate(arrayCoords[i]),
-																	 MKMapPointForCoordinate(arrayCoords[i+1])     );
-		}
-		
-		// Ajout de la distance avec le point le plus proche
-		retDistance = retDistance + MKMetersBetweenMapPoints(
-										MKMapPointForCoordinate(arrayCoords[closestLocationPoint]),
-										MKMapPointForCoordinate(maMapView.userLocation.coordinate));
-		
-		return retDistance;
-	}
-	// Si on n'a pas trouvé de point concordant, on retourne une distance nulle
-	else {
-		return 0;
-	}
-		
-}
-
-// Compute the estimated course between 2 points
-- (float)estimateCourse:(CLLocationCoordinate2D)fromPoint toPoint:(CLLocationCoordinate2D)toPoint
-{
-	float course = fmod(atan2(sin(fromPoint.longitude-toPoint.longitude)*cos(toPoint.latitude),cos(fromPoint.latitude)*sin(toPoint.latitude)-
-							  sin(fromPoint.latitude)*cos(toPoint.latitude)*cos(fromPoint.longitude-toPoint.longitude)), 2 * pi);
-		
-	// quick hack for symetric sign error. needs elegancy tweak later
-	if(sin(toPoint.longitude - fromPoint.longitude) < 0.0)
-		course = 2 * pi - course;
-	if(course < 0.0)
-		course = 2 * pi - course;
-	if(course > 2 * pi)
-		course = course - 2 * pi;
-	
-	return(course);
-}
-
 
 
 #pragma mark -
@@ -586,6 +512,8 @@ BOOL shakeStatus=YES;
 	[maMapView release];
 	[payload release];
 	[request release];
+	[monSpinner release];
+	[tempLabel release];
 	[super dealloc];
 }
 
