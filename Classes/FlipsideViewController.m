@@ -17,6 +17,7 @@ extern BOOL shakeStatus;
 @synthesize monSlider;
 @synthesize valeurSlider;
 @synthesize shakeSwitch;
+@synthesize vue1,vue2;
 
 
 - (void)viewDidLoad {
@@ -39,6 +40,15 @@ extern BOOL shakeStatus;
 	}
 			
     self.view.backgroundColor = [UIColor viewFlipsideBackgroundColor];      
+	
+	// Adds gray layers
+	//vue1.backgroundColor = [UIColor scrollViewTexturedBackgroundColor];  
+	vue1.backgroundColor = [UIColor colorWithWhite:0.8 alpha:0.15];
+	vue1.layer.cornerRadius = 6.0;
+	
+	//vue1.backgroundColor = [UIColor scrollViewTexturedBackgroundColor];  
+	vue2.backgroundColor = [UIColor colorWithWhite:0.8 alpha:0.15];
+	vue2.layer.cornerRadius = 6.0;
 }
 
 
@@ -103,6 +113,8 @@ extern BOOL shakeStatus;
 	[monSlider release];
 	[valeurSlider release];
 	[shakeSwitch release];
+	[vue1 release];
+	[vue2 release];
     [super dealloc];
 }
 

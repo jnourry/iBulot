@@ -8,7 +8,6 @@
 
 #import "MainViewController.h"
 #import <MapKit/MapKit.h>
-#import <QuartzCore/QuartzCore.h>
 
 #define kMaxPoints						100
 
@@ -85,15 +84,16 @@ BOOL shakeStatus=YES;
 	[self.view addSubview:monSpinner]; // spinner is not visible until started
 	
 	
-	// ADD LABEL
+	// Create the labelome
 	tempLabel = [[UILabel alloc] initWithFrame:CGRectMake(90, 421, 130, 30)];
-	[tempLabel setCenter:CGPointMake(160, 436)];
+	[tempLabel setCenter:CGPointMake(kiPhoneWidth/2.0, 436)];
 	[tempLabel setText:NSLocalizedString(@"Retrieving data",@"")];
 	[tempLabel setTextAlignment:UITextAlignmentCenter];
 	tempLabel.backgroundColor = [UIColor colorWithWhite:0.25 alpha:1.0];
 	tempLabel.textColor = [UIColor whiteColor];
-	tempLabel.layer.cornerRadius = 8.0;
-	tempLabel.shadowColor = [UIColor grayColor];
+	tempLabel.layer.borderColor = [[UIColor whiteColor] CGColor];
+	tempLabel.layer.borderWidth = 1.5;
+ 	tempLabel.layer.cornerRadius = 6.0;
 }
 
 // To update Map at launch and when you come back from FlipSide View
@@ -226,6 +226,7 @@ BOOL shakeStatus=YES;
 	
 	// Remove label
 	[tempLabel removeFromSuperview];
+
 	
 	kml = [[KMLParser parseKMLAtPath:pathFichierTemp] retain];
 	

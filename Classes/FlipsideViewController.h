@@ -19,12 +19,17 @@
 	IBOutlet UISlider *monSlider;
 	IBOutlet UILabel *valeurSlider;
 	IBOutlet UISwitch *shakeSwitch;
+	
+	IBOutlet UIView *vue1;
+	IBOutlet UIView *vue2;
 }
 
 @property (nonatomic, assign) id <FlipsideViewControllerDelegate> delegate;
 @property (nonatomic, retain) IBOutlet UISlider *monSlider;  
 @property (nonatomic, retain) IBOutlet UILabel *valeurSlider;  
 @property (nonatomic, retain) IBOutlet UISwitch *shakeSwitch;  
+@property (nonatomic, retain) IBOutlet UIView *vue1;  
+@property (nonatomic, retain) IBOutlet UIView *vue2;  
 
 
 - (IBAction)done:(id)sender;

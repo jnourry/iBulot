@@ -7,6 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
+
+
+//iPhone Size
+#define kiPhoneWidth					320
+#define kiPhoneHeight					460
 
 @class MainViewController;
 
