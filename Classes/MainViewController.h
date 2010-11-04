@@ -53,6 +53,7 @@
 - (void)majCarte;
 - (BOOL)pauseAnnotationExists;
 - (CLLocationDistance) getDistance: (CLLocationCoordinate2D *)arrayCoords;
+- (void)stopNetworkingAlerts;
 
 @property (nonatomic, retain) UIButton *refreshButton;
 @property (nonatomic, retain) UILabel *distanceA;

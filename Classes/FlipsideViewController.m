@@ -41,12 +41,10 @@ extern BOOL shakeStatus;
 			
     self.view.backgroundColor = [UIColor viewFlipsideBackgroundColor];      
 	
-	// Adds gray layers
-	//vue1.backgroundColor = [UIColor scrollViewTexturedBackgroundColor];  
+	// Add transparent gray layers to the XIB Subviews
 	vue1.backgroundColor = [UIColor colorWithWhite:0.8 alpha:0.15];
 	vue1.layer.cornerRadius = 6.0;
 	
-	//vue1.backgroundColor = [UIColor scrollViewTexturedBackgroundColor];  
 	vue2.backgroundColor = [UIColor colorWithWhite:0.8 alpha:0.15];
 	vue2.layer.cornerRadius = 6.0;
 }

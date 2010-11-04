@@ -6,16 +6,16 @@
    Copyright 2010 Personal. All rights reserved.
  */
 
-/* URL connexion went down. */
-"Connexion to R&C site failed. Please try again" = "Connexion to R&C site failed. Please try again";
+/* URL connection went down. */
+"Connection to R&C site failed. Please try again" = "Connection to R&C site failed. Please try again";
 
 
-/* Connexion PB */
+/* Network PB */
 "Network problem" = "Network problem";
 
 
 /* URL connexion init failed */
-"Init of URL connexion failed" = "Init of URL connexion failed";
+"Init of URL connection failed" = "Init of URL connexion failed";
 
 
 /* User location */

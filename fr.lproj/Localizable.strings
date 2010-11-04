@@ -6,16 +6,16 @@
    Copyright 2010 Personal. All rights reserved.
  */
 
-/* URL connexion went down. */
-"Connexion to R&C site failed. Please try again" = "La connection au site R&C a été interrompue. Veuillez réessayer.";
+/* URL connection went down. */
+"Connection to R&C site failed. Please try again" = "La connexion au site R&C a été interrompue. Veuillez réessayer.";
 
 
-/* Connexion PB */
+/* Network PB */
 "Network problem" = "Problème réseau";
 
 
-/* URL connexion init failed */
-"Init of URL connexion failed" = "La connection au site R&C n'a pas pu être établie";
+/* URL connection init failed */
+"Init of URL connection failed" = "La connexion au site R&C n'a pas pu être établie";
 
 
 /* User location */

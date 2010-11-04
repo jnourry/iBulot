@@ -957,7 +957,7 @@ static void strToCoords(NSString *str, CLLocationCoordinate2D **coordsOut, NSUIn
         mkShape.title = name;
         // Skip setting the subtitle for now because they're frequently
         // too verbose for viewing on in a callout in most kml files.
-//        mkShape.subtitle = placemarkDescription;
+		// mkShape.subtitle = placemarkDescription;
     }
 }
 

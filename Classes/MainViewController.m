@@ -29,6 +29,8 @@ int old_nb_points = 10;
 // - Shake YES or NO
 BOOL shakeStatus=YES;
 
+NSString *lastTitle = @"";
+
 
 @implementation MainViewController
 
@@ -84,7 +86,7 @@ BOOL shakeStatus=YES;
 	[self.view addSubview:monSpinner]; // spinner is not visible until started
 	
 	
-	// Create the labelome
+	// Create the label
 	tempLabel = [[UILabel alloc] initWithFrame:CGRectMake(90, 421, 130, 30)];
 	[tempLabel setCenter:CGPointMake(kiPhoneWidth/2.0, 436)];
 	[tempLabel setText:NSLocalizedString(@"Retrieving data",@"")];
@@ -94,6 +96,10 @@ BOOL shakeStatus=YES;
 	tempLabel.layer.borderColor = [[UIColor whiteColor] CGColor];
 	tempLabel.layer.borderWidth = 1.5;
  	tempLabel.layer.cornerRadius = 6.0;
+	
+	tempLabel.alpha = 0.0f;
+	[self.view addSubview:tempLabel];
+
 }
 
 // To update Map at launch and when you come back from FlipSide View
@@ -139,6 +145,12 @@ BOOL shakeStatus=YES;
 	// Affichage de la position utilisateur
 	maMapView.showsUserLocation = YES;
 	maMapView.userLocation.title = NSLocalizedString(@"My Location",@"");
+	
+	// Remove old overlays
+	[maMapView removeOverlays: [maMapView overlays]];
+	
+	// 1st update of the map
+	[self getKML];
 }
 
 - (void)getKML
@@ -150,8 +162,8 @@ BOOL shakeStatus=YES;
 	// Display custom activity indicator
 	[monSpinner startAnimating];
 	
-	// Display custom label
-	[self.view addSubview:tempLabel];
+	// Display custom label, setting its transparency off
+	tempLabel.alpha = 1.0f;
 
 	
 	// Suppression des annotations sauf la position de l'utilisateur et la position Pause
@@ -182,16 +194,14 @@ BOOL shakeStatus=YES;
 		NSLog(@"Problème de connexion");
 		UIAlertView *alert = [[UIAlertView alloc]
 							  initWithTitle:NSLocalizedString(@"Network problem",@"")
-							  message:NSLocalizedString(@"Init of URL connexion failed",@"")
+							  message:NSLocalizedString(@"Init of URL connection failed",@"")
 							  delegate:self 
 							  cancelButtonTitle:@"OK"
 							  otherButtonTitles:nil];
 		[alert show];
 		[alert release];
 		
-		// Suppression de la roue de recherche d'activité réseau
-		UIApplication* app = [UIApplication sharedApplication];
-		app.networkActivityIndicatorVisible = NO;
+		[self stopNetworkingAlerts];
 	}
 }
 
@@ -216,18 +226,11 @@ BOOL shakeStatus=YES;
 		}
 	}
 	
+	[self stopNetworkingAlerts];
 	
-	// Suppression de la roue de recherche d'activité réseau
-	UIApplication* app = [UIApplication sharedApplication];
-	app.networkActivityIndicatorVisible = NO;
 	
-	// Stop custom activity indicator
-	[monSpinner stopAnimating];
-	
-	// Remove label
-	[tempLabel removeFromSuperview];
+	// Instantiate the KML class
 
-	
 	kml = [[KMLParser parseKMLAtPath:pathFichierTemp] retain];
 	
 	CLLocationDistance distanceTotale = 0;
@@ -299,8 +302,19 @@ BOOL shakeStatus=YES;
     
     // Idem pour les objets MKAnnotation
     NSArray *annotations = [kml points];
+	
     [maMapView addAnnotations:annotations];
-    
+	
+	// Search the last position (the info is in its pin title)
+	// it will be used to apply the purple colour to the pin
+	lastTitle = @"";
+	for (id <MKAnnotation>annotation in maMapView.annotations)
+		{
+		if (annotation.title != @"Pause" && 
+			([lastTitle compare:annotation.title] == NSOrderedAscending))
+			lastTitle = annotation.title;
+		}
+	
     // Balayage de la liste des "couches" et annotations et création d'un MKMapRect flyTo 
     // qui les rassemble tous
     MKMapRect flyTo = MKMapRectNull;
@@ -377,6 +391,24 @@ BOOL shakeStatus=YES;
 }
 
 
+- (void)stopNetworkingAlerts;
+{
+	// Suppression de la roue de recherche d'activité réseau
+	UIApplication* app = [UIApplication sharedApplication];
+	app.networkActivityIndicatorVisible = NO;
+	
+	// Stop custom activity indicator
+	[monSpinner stopAnimating];
+	
+	// Remove label with fade out
+	[UIView beginAnimations:nil context:NULL];
+	[UIView setAnimationDuration:0.75f];	
+	tempLabel.alpha = 0.0f;
+	
+	[UIView commitAnimations];
+}
+
+
 #pragma mark -
 #pragma mark NSURLConnection Delegates
 - (void)connection:(NSURLConnection *)conn didReceiveResponse:(NSURLResponse *)response
@@ -408,16 +440,14 @@ BOOL shakeStatus=YES;
 	[payload setLength:0];
 	UIAlertView *alert = [[UIAlertView alloc]
 						  initWithTitle:NSLocalizedString(@"Network problem",@"")
-						  message:NSLocalizedString(@"Connexion to R&C site failed. Please try again",@"")
+						  message:NSLocalizedString(@"Connection to R&C site failed. Please try again",@"")
 						  delegate:self 
 						  cancelButtonTitle:@"OK"
 						  otherButtonTitles:nil];
 	[alert show];
 	[alert release];
 	
-	// Suppression de la roue de recherche d'activité réseau
-	UIApplication* app = [UIApplication sharedApplication];
-	app.networkActivityIndicatorVisible = NO;
+	[self stopNetworkingAlerts];
 
 	NSLog(@"Connexion plantée");		
 }
@@ -446,7 +476,6 @@ BOOL shakeStatus=YES;
 	if ((length >= kEraseAccelerationThreshold) &&
 		(CFAbsoluteTimeGetCurrent() > lastTime + kMinEraseInterval)){
 		if (shakeStatus == YES) {
-			NSLog(@"Dans Accélération -> OK");
 			[self getKML];
 		}
 		lastTime = CFAbsoluteTimeGetCurrent();
@@ -518,6 +547,7 @@ BOOL shakeStatus=YES;
 	[super dealloc];
 }
 
+#pragma mark -
 #pragma mark MKMapViewDelegate
 
 - (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id <MKOverlay>)overlay
@@ -538,9 +568,25 @@ BOOL shakeStatus=YES;
 			PauseView.canShowCallout = YES;
 			PauseView.calloutOffset = CGPointMake(-5, 5);
 			
+			// Custom annotation view image
+			//PauseView.image = [UIImage imageNamed:@"nom.png"];
+			
 			return PauseView;
 		}
-		// Sinon, on laisse KMLParser gérer :)
+		// Sinon, pour distinguer le dernier point -> violet
+		else if (lastTitle == annotation.title)
+		{
+			MKPinAnnotationView *FirstPinView=[[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"FirstPin"] autorelease];
+			
+			FirstPinView.pinColor = MKPinAnnotationColorPurple;
+			FirstPinView.animatesDrop=YES;
+			FirstPinView.canShowCallout = YES;
+			FirstPinView.calloutOffset = CGPointMake(-5, 5);
+				
+			return FirstPinView;
+		}
+		
+		// Sinon, on laisse KMLParser gérer :) --> en rouge :)
 		else
 		{
 			return [kml viewForAnnotation:annotation];
