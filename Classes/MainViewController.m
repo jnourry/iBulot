@@ -24,7 +24,7 @@
 // Déclaration des globales par défaut
 // - nombre d'annotations
 int nb_points = 5;
-int old_nb_points = 10;
+int old_nb_points = 5;
 
 // - Shake YES or NO
 BOOL shakeStatus=YES;
@@ -70,6 +70,7 @@ NSString *lastTitle = @"";
 	{
 		// After first run ;)
 		nb_points = [userPrefs integerForKey:@"nb_points"];
+		old_nb_points = nb_points;
 		shakeStatus = [userPrefs boolForKey:@"shakeStatus"];
 	}
 
@@ -311,8 +312,12 @@ NSString *lastTitle = @"";
 	for (id <MKAnnotation>annotation in maMapView.annotations)
 		{
 		if (annotation.title != @"Pause" && 
+			annotation != maMapView.userLocation &&
 			([lastTitle compare:annotation.title] == NSOrderedAscending))
 			lastTitle = annotation.title;
+		if (annotation == maMapView.userLocation) {
+			NSLog(@"test");
+		}
 		}
 	
     // Balayage de la liste des "couches" et annotations et création d'un MKMapRect flyTo 
@@ -414,7 +419,7 @@ NSString *lastTitle = @"";
 - (void)connection:(NSURLConnection *)conn didReceiveResponse:(NSURLResponse *)response
 {
 	NSLog(@"Réponse reçue - Longueur prévue : %i", [response expectedContentLength]);
-	
+		
 	[payload setLength:0];
 }
 
