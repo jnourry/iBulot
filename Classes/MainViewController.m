@@ -17,9 +17,6 @@
 #define kMinEraseInterval				2.0
 #define kEraseAccelerationThreshold		2.0
 
-// PI
-#define pi								3.141592
-
 
 // Déclaration des globales par défaut
 // - nombre d'annotations
@@ -100,10 +97,10 @@ NSString *lastTitle = @"";
 	
 	tempLabel.alpha = 0.0f;
 	[self.view addSubview:tempLabel];
-
+	
 }
 
-// To update Map at launch and when you come back from FlipSide View
+// To update Map at launch or when you come back from FlipSide View
 - (void)viewDidAppear:(BOOL)animated {
 	[super viewDidAppear:animated];
 	
@@ -315,9 +312,6 @@ NSString *lastTitle = @"";
 			annotation != maMapView.userLocation &&
 			([lastTitle compare:annotation.title] == NSOrderedAscending))
 			lastTitle = annotation.title;
-		if (annotation == maMapView.userLocation) {
-			NSLog(@"test");
-		}
 		}
 	
     // Balayage de la liste des "couches" et annotations et création d'un MKMapRect flyTo 
@@ -413,6 +407,65 @@ NSString *lastTitle = @"";
 	[UIView commitAnimations];
 }
 
+- (void)flipsideViewControllerDidFinish:(FlipsideViewController *)controller {
+    
+	[self dismissModalViewControllerAnimated:YES];
+}
+
+
+- (IBAction)showInfo:(id)sender {    
+	
+	FlipsideViewController *controller = [[FlipsideViewController alloc] initWithNibName:@"FlipsideView" bundle:nil];
+	controller.delegate = self;
+	
+	controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+	[self presentModalViewController:controller animated:YES];
+	
+	[controller release];
+}
+
+// A l'appui du bouton : Màj
+- (IBAction)refreshCarte:(id)sender {  	
+	
+	// Récupération KML et màj des annotations	
+	[self getKML];
+}
+
+- (void)didReceiveMemoryWarning {
+	// Releases the view if it doesn't have a superview.
+    [super didReceiveMemoryWarning];
+	
+	// Release any cached data, images, etc. that aren't in use.
+}
+
+
+- (void)viewDidUnload {
+	// Release any retained subviews of the main view.
+	// e.g. self.myOutlet = nil;
+}
+
+
+/*
+ // Override to allow orientations other than the default portrait orientation.
+ - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+ // Return YES for supported orientations.
+ return (interfaceOrientation == UIInterfaceOrientationPortrait);
+ }
+ */
+
+
+// Désallocation des différents objets
+- (void)dealloc {
+	[refreshButton release];
+	[distanceA release];
+	[distanceR release];
+	[maMapView release];
+	[payload release];
+	[request release];
+	[monSpinner release];
+	[tempLabel release];
+	[super dealloc];
+}
 
 #pragma mark -
 #pragma mark NSURLConnection Delegates
@@ -492,65 +545,6 @@ NSString *lastTitle = @"";
 }
 	 
 	 
-- (void)flipsideViewControllerDidFinish:(FlipsideViewController *)controller {
-    
-	[self dismissModalViewControllerAnimated:YES];
-}
-
-
-- (IBAction)showInfo:(id)sender {    
-	
-	FlipsideViewController *controller = [[FlipsideViewController alloc] initWithNibName:@"FlipsideView" bundle:nil];
-	controller.delegate = self;
-	
-	controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-	[self presentModalViewController:controller animated:YES];
-	
-	[controller release];
-}
-
-// A l'appui du bouton : Màj
-- (IBAction)refreshCarte:(id)sender {  	
-	
-	// Récupération KML et màj des annotations	
-	[self getKML];
-}
-
-- (void)didReceiveMemoryWarning {
-	// Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-	
-	// Release any cached data, images, etc. that aren't in use.
-}
-
-
-- (void)viewDidUnload {
-	// Release any retained subviews of the main view.
-	// e.g. self.myOutlet = nil;
-}
-
-
-/*
-// Override to allow orientations other than the default portrait orientation.
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	// Return YES for supported orientations.
-	return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-*/
-
-
-// Désallocation des différents objets
-- (void)dealloc {
-	[refreshButton release];
-	[distanceA release];
-	[distanceR release];
-	[maMapView release];
-	[payload release];
-	[request release];
-	[monSpinner release];
-	[tempLabel release];
-	[super dealloc];
-}
 
 #pragma mark -
 #pragma mark MKMapViewDelegate

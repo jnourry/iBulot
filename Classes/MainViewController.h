@@ -46,6 +46,7 @@
 #pragma mark Accelerometer Delegates
 - (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration;
 
+
 #pragma mark -
 #pragma mark Autres méthodes
 - (void)initMap;
